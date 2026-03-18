@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bua">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Сая сэнтэй баялигай эзэн болохоо hананаб?</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Centering overrides so main menu and game panel stay centered */
+  html,body{height:100%}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:24px;background:radial-gradient(circle at 10% 10%, rgba(0,0,0,0.45), transparent 25%), linear-gradient(180deg,#020615 0%, #071826 100%);} 
+  .app{width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+  /* Main card (menu) */
+  #main-menu, .game-card{width:640px;max-width:96vw;padding:36px;border-radius:12px;background:linear-gradient(180deg,#0b679a,#074f6f);box-shadow:0 18px 60px rgba(0,0,0,0.75);text-align:center;border:1px solid rgba(255,255,255,0.03);margin:0}
+  #main-menu .logo{width:84px;height:84px;border-radius:50%;margin:0 auto 18px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;border:4px solid rgba(255,255,255,0.03)}
+  #main-menu .logo img{width:72px;height:72px;border-radius:50%;object-fit:contain}
+  #main-menu .title{font-size:34px;color:#ffd24a;font-weight:800;margin:8px 0 14px;text-shadow:0 2px 0 rgba(0,0,0,0.35)}
+  #main-menu .subtitle{font-size:18px;color:rgba(255,255,255,0.95);font-weight:700;margin-bottom:18px}
+  .categories{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .categories button{background:#d75a2a;color:#fff;padding:10px 16px;border-radius:8px;border:none;min-width:130px;box-shadow:0 6px 0 rgba(0,0,0,0.35);cursor:pointer;font-weight:700}
+
+  /* Game panel/card which appears after selecting category */
+  .game-panel{display:none;width:640px;max-width:96vw;margin-top:18px}
+  .game-card{padding:30px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .timer{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;font-weight:700}
+  .question{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;font-size:20px;min-height:64px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .answers button{background:linear-gradient(180deg,#d75a2a,#b34a1b);border:none;padding:14px;border-radius:12px;color:#fff; font-size:16px;text-align:center;box-shadow:0 6px 18px rgba(2,6,23,0.5);cursor:pointer}
+  .help-row{display:flex;gap:8px;margin-top:10px;justify-content:center}
+  .help{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:#ffd24a;font-weight:700}
+  .danger{background:linear-gradient(180deg,#ff6b6b,#ff3b3b);color:#fff}
+
+  /* Ladder hidden below on mobile, but center on desktop too */
+  .ladder{display:none}
+
+  @media(max-width:860px){
+    .categories{justify-content:center}
+    .answers{grid-template-columns:1fr}
+    #main-menu, .game-card{padding:18px}
+    .title{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="main-menu">
+    <div class="logo"><img src="logo.png" alt="logo"></div>
+    <div class="title">Сая сэнтэй баялигай эзэн болохоо hананаб?</div>
+    <div class="subtitle">Сэдэбүүд:</div>
+    <div class="categories">
+      <button data-category="degel">Дэгэл</button>
+      <button data-category="yurta">hэеы гэр</button>
+      <button data-category="eda">Эдэн</button>
+      <button data-category="zabkrai">Забайкалиин хизаар</button>
+      <button data-category="spirits">Үльгэрэй һүлдэнүүд</button>
+      <button data-category="buddha">Буддын шажанай бурхад</button>
+      <button data-category="zabpeople">Мэдээжэ хүнүүд</button>
+    </div>
+  </div>
+
+  <div class="game-panel" id="question-area">
+    <div class="game-card">
+      <div class="topbar">
+        <div id="timer" class="timer">40</div>
+        <div id="money" class="money">Түхэриг: <span id="current-money">0</span></div>
+      </div>
+      <div id="question" class="question">Вопрос появится здесь</div>
+      <div id="answers" class="answers" style="margin-top:14px">
+        <button data-answer="a"></button>
+        <button data-answer="b"></button>
+        <button data-answer="c"></button>
+        <button data-answer="d"></button>
+      </div>
+      <div class="help-row">
+        <button id="fifty-button" class="help">50/50</button>
+        <button id="audience-button" class="help">Залайн туhаламжа</button>
+        <button id="quit-button" class="help danger">Шан абахадаа, яба</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="questions.js"></script>
+<script src="script.js"></script>
+<script>
+  // Ensure there is no left shift: always center main and game panel
+  const mainMenu = document.getElementById('main-menu');
+  const questionArea = document.getElementById('question-area');
+
+  document.querySelectorAll('#main-menu .categories button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const cat = b.dataset.category;
+      // call startGame if available
+      if(typeof startGame === 'function') startGame(cat);
+      else if(window.startGameFromMain) window.startGameFromMain(cat);
+      // show centered game panel
+      mainMenu.style.display = 'none';
+      questionArea.style.display = 'block';
+      // scroll to center
+      window.scrollTo({top:0,left:0,behavior:'smooth'});
+      // ensure answers are centered (no margin-left)
+      const answers = document.getElementById('answers'); if(answers) answers.style.marginLeft = '0';
+    });
+  });
+
+  // When restart is called by script.js, ensure main menu shown centered
+  // expose a small helper for restart flow
+  window.showMainMenu = function(){
+    questionArea.style.display = 'none';
+    mainMenu.style.display = 'block';
+    window.scrollTo({top:0,left:0,behavior:'smooth'});
+  }
+
+  // If script.js calls restartGame or similar, you can call showMainMenu from end overlay button
+</script>
+</body>
+</html>
