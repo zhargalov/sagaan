@@ -30,18 +30,24 @@ const LEVELS = 10;
 const PRIZES = [100,200,400,800,1600,3200,6400,12800,25600,1000000];
 function prizeFor(idx){ return PRIZES[Math.max(0, Math.min(PRIZES.length-1, idx))]; }
 
-// audio
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// audio – lazy-init AudioContext on first user interaction (required by mobile browsers)
+let audioCtx = null;
+function getAudioCtx(){
+  if(audioCtx) return audioCtx;
+  try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return null; }
+  return audioCtx;
+}
 function playTone(freq, type='sine', dur=0.12, gain=0.12){
-  try{ if(audioCtx.state==='suspended') audioCtx.resume(); }catch(e){}
-  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  const ctx = getAudioCtx(); if(!ctx) return;
+  try{ if(ctx.state==='suspended') ctx.resume(); }catch(e){}
+  const o = ctx.createOscillator(); const g = ctx.createGain();
   o.type = type; o.frequency.value = freq; g.gain.value = gain;
-  o.connect(g); g.connect(audioCtx.destination);
-  o.start(); g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
   setTimeout(()=>{ try{o.stop();}catch(e){} }, dur*1000+50);
 }
 function playSound(name){
-  if(!audioCtx) return;
+  if(!getAudioCtx()) return;
   if(name==='tick') playTone(880,'sine',0.06,0.05);
   else if(name==='correct'){ playTone(660,'sine',0.12,0.12); setTimeout(()=>playTone(880,'sine',0.1,0.08),120); }
   else if(name==='wrong'){ playTone(160,'sawtooth',0.45,0.16); }

@@ -7,9 +7,9 @@
 <link rel="stylesheet" href="style.css">
 <style>
   /* Centering overrides so main menu and game panel stay centered */
-  html,body{height:100%}
-  body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:24px;background:radial-gradient(circle at 10% 10%, rgba(0,0,0,0.45), transparent 25%), linear-gradient(180deg,#020615 0%, #071826 100%);} 
-  .app{width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  html{height:100%}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;margin:0;padding:24px;background:radial-gradient(circle at 10% 10%, rgba(0,0,0,0.45), transparent 25%), linear-gradient(180deg,#020615 0%, #071826 100%);overflow-y:auto}
+  .app{width:100%;max-width:900px;display:flex;flex-direction:column;align-items:center;margin:auto 0}
 
   /* Main card (menu) */
   #main-menu, .game-card{width:640px;max-width:96vw;padding:36px;border-radius:12px;background:linear-gradient(180deg,#0b679a,#074f6f);box-shadow:0 18px 60px rgba(0,0,0,0.75);text-align:center;border:1px solid rgba(255,255,255,0.03);margin:0}
@@ -18,7 +18,7 @@
   #main-menu .title{font-size:34px;color:#ffd24a;font-weight:800;margin:8px 0 14px;text-shadow:0 2px 0 rgba(0,0,0,0.35)}
   #main-menu .subtitle{font-size:18px;color:rgba(255,255,255,0.95);font-weight:700;margin-bottom:18px}
   .categories{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-  .categories button{background:#d75a2a;color:#fff;padding:10px 16px;border-radius:8px;border:none;min-width:130px;box-shadow:0 6px 0 rgba(0,0,0,0.35);cursor:pointer;font-weight:700}
+  .categories button{background:#d75a2a;color:#fff;padding:10px 16px;border-radius:8px;border:none;min-width:130px;box-shadow:0 6px 0 rgba(0,0,0,0.35);cursor:pointer;font-weight:700;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
   /* Game panel/card which appears after selecting category */
   .game-panel{display:none;width:640px;max-width:96vw;margin-top:18px}
@@ -27,7 +27,7 @@
   .timer{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;font-weight:700}
   .question{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;font-size:20px;min-height:64px;display:flex;align-items:center;justify-content:center;color:#fff}
   .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-  .answers button{background:linear-gradient(180deg,#d75a2a,#b34a1b);border:none;padding:14px;border-radius:12px;color:#fff; font-size:16px;text-align:center;box-shadow:0 6px 18px rgba(2,6,23,0.5);cursor:pointer}
+  .answers button{background:linear-gradient(180deg,#d75a2a,#b34a1b);border:none;padding:14px;border-radius:12px;color:#fff; font-size:16px;text-align:center;box-shadow:0 6px 18px rgba(2,6,23,0.5);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .help-row{display:flex;gap:8px;margin-top:10px;justify-content:center}
   .help{flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:#ffd24a;font-weight:700}
   .danger{background:linear-gradient(180deg,#ff6b6b,#ff3b3b);color:#fff}
@@ -40,6 +40,10 @@
     .answers{grid-template-columns:1fr}
     #main-menu, .game-card{padding:18px}
     .title{font-size:22px}
+    .categories button{min-width:110px;padding:12px 14px;font-size:15px;min-height:44px}
+    .answers button{min-height:48px;font-size:15px}
+    .help{min-height:44px;font-size:14px}
+    body{padding:12px}
   }
 </style>
 </head>
